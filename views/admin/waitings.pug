@@ -1,0 +1,42 @@
+extends ../base.pug
+
+
+mixin make_reservation_card(washer)
+  - var status = washer.canceled?'canceled':washer.broken?'broken':(washer.able?'able':'disable');
+  - var color = {'able':"secondary",'disable':"success",'broken':"danger", "canceled":"secondary"};
+  - var dict = {'able':"대기중",'disable':"사용중",'broken':"고장", "canceled":"취소됨"};
+  .row.washer.justify-content-md-center.mb-3
+    .col-xl-8.col-lg-9.col-md-10.col-sm-12.machine(data-washer=washer._id)
+      span(class=['badge', 'badge-'+color[status], 'text-lg', 'absolute-left-top']) #{dict[status]}
+      div(class=['card','border-left-'+color[status],'shadow','h-100','pt-3'])
+        .card-body
+          .row
+            .col-xl-2.col-lg-3.col-md-3.d-none.d-lg-block.align-middle
+                div(class=['col-12','icofont-washing-machine','icofont-5x','text-'+color[status]])
+            .col
+              .row
+                div.float-left.mx-3
+                  span.badge.badge-secondary.px-3.py-1 아이디
+                  p #{washer.userid}
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 예약일자
+                  p #{timeformat.yyyymmdd(washer.from)}
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 예약시간
+                  p #{timeformat.hhmm(washer.from)}
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 종료시간
+                  p #{timeformat.hhmm(washer.to)}
+                if(status=='disable')
+                  div.float-left.mx-3
+                    div.badge.badge-secondary.px-3.py-1 남은 시간
+                    .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer #{timeformat.mmss(washer.to - new Date())}
+
+
+
+block content
+  .container-fluid
+    h2.text-gray-800.text-left.mt-3 세탁기
+    hr
+    each l in list
+      +make_reservation_card(l)

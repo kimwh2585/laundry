@@ -1,0 +1,64 @@
+extends base.pug
+
+
+mixin make_machine_card(washer)
+  - var status = washer.broken?'broken':(washer.able?'able':'disable');
+  - var color = {'able':"success",'disable':"secondary",'broken':"danger"};
+  - var dict = {'able':"사용가능",'disable':"예약불가",'broken':"고장"};
+  .col-xl-3.col-md-4.col-xs-12.mb-4.machine(data-machineid=washer._id)
+    form(action='/laundry/payment' method='post')
+      input(type='hidden' required='required' name='machineid' value=washer._id)
+      input(type='hidden' required='required' name='date' value=date)
+      input(type='hidden' required='required' name='time' value=time)
+      input(type='hidden' required='required' name='duration' value=duration)
+      span(class=['badge', 'badge-'+color[status], 'text-lg', 'absolute-left-top']) #{washer.size.toUpperCase()[0]}
+      div(class=['card','border-left-'+color[status],'shadow','h-100','py-2'])
+        .card-body
+          .row.no-gutters.align-items-center
+            .col-lg-6.col-md-12.d-none.d-lg-block.align-middle
+              i(class=['icofont-washing-machine','icofont-5x','text-'+color[status]])
+            .col-lg-6.col-md-12
+              .btn-group.mt-2.mb-2.w-100
+                if(status=='able')
+                  button.btn.btn-sm.btn-outline-dark.reserve(type='submit') 예약하기
+                else
+                  button.btn.btn-sm.btn-outline-dark(type='button',disabled='disabled') #{dict[status]}
+              if (status=='disable' && washer.remaintime > 0)
+                .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer #{timeformat.mmss(washer.remaintime)}
+              else
+                .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer -- : --
+
+
+block content
+  .container-fluid
+    .card.o-hidden.border-0.shadow-lg
+      .card-body.px-4.pb-1
+        form.form-row(action='/laundry')
+          .form-group.col-lg-4.col-md-4.col-sm-12
+            label(for='date') 예약 날짜
+            input#date.form-control(type='date' placeholder='예약 날짜' name='date' value=date)
+          .form-group.col-lg-4.col-md-4.col-sm-12
+            label(for='time') 예약 시간
+            input#time.form-control(type='time' placeholder='예약 시간' name='time' value=time)
+          //- .form-group.col-lg-4.col-md-4.col-sm-12
+          //-   label(for='size') 세탁물
+          //-   select#size.form-control(name='duration')
+          //-     option(value='20') 중형 (20분)
+          //-     option(value='30') 대형 (30분)
+          .form-group.col-lg-4.col-md-4.col-sm-12
+            button.btn.btn-primary.h-100.w-100(type='submit') 검색하기
+    h2.text-gray-800.text-left.mt-3 세탁기
+    hr
+    .row.washer
+      each w in washers
+        +make_machine_card(w)
+
+    h2.text-gray-800.text-left.mt-3 건조기
+    hr
+    .row.washer
+      each w in dryers
+        +make_machine_card(w)
+  script.
+    $('button.reserve').click(function() {
+      x = $(this).closest('.machine')
+    })

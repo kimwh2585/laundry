@@ -1,0 +1,69 @@
+extends ../base.pug
+
+
+mixin make_machine_card(washer)
+  - var status = washer.broken?'broken':(washer.able?'able':'disable');
+  - var color = {'able':"success",'disable':"warning",'broken':"danger"};
+  - var dict = {'able':"사용가능",'disable':"사용중",'broken':"고장"};
+  .col-xl-3.col-md-4.col-xs-12.mb-4.machine(data-washer=washer._id)
+    span(class=['badge', 'badge-'+color[status], 'text-lg', 'absolute-left-top']) #{washer.size.toUpperCase()[0]}
+    div(class=['card','border-left-'+color[status],'shadow','h-100','py-2'])
+      .card-body
+        .row.no-gutters.align-items-center
+          .col-lg-6.col-md-12.d-none.d-lg-block.align-middle
+            i(class=['icofont-washing-machine','icofont-5x','text-'+color[status]])
+          .col-lg-6.col-md-12
+            .btn-group.mt-2.mb-2.w-100
+              button.btn.btn-sm.btn-outline-dark.dropdown-toggle(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false')
+                | #{dict[status]}
+              ul.dropdown-menu
+                li
+                  form(action='/machine/broken' method='post')
+                    input(type='hidden' name='machineid' value=washer._id)
+                    button.dropdown-item(name='broken' value=true) 고장
+                li
+                  form(action='/machine/broken' method='post')
+                    input(type='hidden' name='machineid' value=washer._id)
+                    button.dropdown-item(name='broken' value=false) 사용가능
+                li
+                  form(action='/machine/delete' method='post')
+                    input(type='hidden' name='machineid' value=washer._id)
+                    button.dropdown-item(name='delete' value=true) 삭제
+            if (status=='disable' && washer.remaintime > 0)
+              .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer #{timeformat.mmss(washer.remaintime)}
+            else
+              .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer -- : --
+
+
+block content
+  .container-fluid
+    h2.text-gray-800.text-left.mt-3 세탁기
+
+      form.mx-1.float-right(action='/machine/wash', method='POST')
+        button.btn.btn-outline-dark.btn-lg.p-1(type='submit' name="size" value="large")
+          i.icofont-ui-add.mx-2
+          span.mr-2 대형
+      form.mx-1.float-right(action='/machine/wash', method='POST')
+        button.btn.btn-outline-dark.btn-lg.p-1(type='submit' name="size" value="small")
+          i.icofont-ui-add.mx-2
+          span.mr-2 소형
+      span.h4.mr-3.py-2.float-right 세탁기 추가
+    hr
+    .row.washer
+      each w in washers
+        +make_machine_card(w)
+
+    h2.text-gray-800.text-left.mt-3 건조기
+      form.mx-1.float-right(action='/machine/dryer', method='POST')
+        button.btn.btn-outline-dark.btn-lg.p-1(type='submit' name="size" value="large")
+          i.icofont-ui-add.mx-2
+          span.mr-2 대형
+      form.mx-1.float-right(action='/machine/dryer', method='POST')
+        button.btn.btn-outline-dark.btn-lg.p-1(type='submit' name="size" value="small")
+          i.icofont-ui-add.mx-2
+          span.mr-2 소형
+      span.h4.mr-3.py-2.float-right 건조기 추가
+    hr
+    .row.dryer
+      each w in dryers
+        +make_machine_card(w)

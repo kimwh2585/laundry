@@ -1,0 +1,22 @@
+
+.text-black {
+  color: #333;
+}
+
+.text-red {
+  color: #e07766;
+}
+
+.text-orange {
+	color: #e07766;
+}
+
+.absolute-left-top {
+	position: absolute !important;
+	top: 1px;
+	z-index: 1;
+}
+
+#login {
+	margin-top: 10%;
+}

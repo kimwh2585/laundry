@@ -1,0 +1,43 @@
+extends base.pug
+
+
+mixin make_reservation_card(washer)
+  - var status = washer.broken?'broken':(washer.able?'using':'disable');
+  - var color = {'using':"success",'finish':"secondary",'wait':"warning",'broken':"danger", "canceled":"secondary"};
+  - var dict = {'using':"사용중",'wait':"대기중",'broken':"고장남", "canceled":"취소됨"};
+  .row.washer.justify-content-md-center.mb-3
+    .col-xl-8.col-lg-9.col-md-10.col-sm-12.machine(data-washer=washer.id)
+      span(class=['badge', 'badge-'+color[washer.status], 'text-lg', 'absolute-left-top']) #{dict[washer.status]}
+      div(class=['card','border-left-'+color[washer.status],'shadow','h-100','pt-3'])
+        .card-body
+          .row
+            .col-xl-2.col-lg-3.col-md-3.d-none.d-lg-block.align-middle
+                div(class=['col-12','icofont-washing-machine','icofont-5x','text-'+color[washer.status]])
+                  #{console.log(washer)}
+            .col
+              .row
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 예약일자
+                  p #{timeformat.yyyymmdd(washer.from)}
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 예약시간
+                  p #{timeformat.hhmm(washer.from)}
+                div.float-left.mx-3
+                  div.badge.badge-secondary.px-3.py-1 종료시간
+                  p #{timeformat.hhmm(washer.to)}
+                if(washer.status=='using')
+                  div.float-left.mx-3
+                    div.badge.badge-secondary.px-3.py-1 남은 시간
+                    .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer #{timeformat.mmss(new Date(washer.to - new Date()))}
+                if(washer.status=='wait')
+                  div.float-right.mx-3
+                    a(href="/laundry-cancel?rid="+washer._id)
+                      button.btn.btn-outline-dark.px-3.py-1 예약 취소
+
+
+block content
+  .container-fluid
+    h2.text-gray-800.text-left.mt-3 예약 내역
+    hr
+    each l in list
+      +make_reservation_card(l)

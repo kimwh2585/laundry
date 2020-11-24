@@ -1,0 +1,28 @@
+doctype html
+head
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  meta(name='description' content='')
+  meta(name='author' content='')
+  title 아 맞다! 내 빨래 ! - #{title}
+  link(href='/css/sb-admin-2.min.css' rel='stylesheet')
+  link(href='/css/style.css' rel='stylesheet')
+  link(href='/css/bootstrap-datepicker3.css' rel='stylesheet')
+  link(href='/icofont/icofont.css' rel='stylesheet')
+  link(href='/fontawesome-free/css/all.min.css' rel='stylesheet')
+  // Bootstrap core JavaScript
+  script(src='/jquery/jquery.min.js')
+  script(src='/bootstrap/js/bootstrap.bundle.min.js')
+#wrapper
+  include component/sidebar
+  #content-wrapper.d-flex.flex-column
+    #content
+      include component/topbar
+      block content
+      include component/footer
+  // Scroll to Top Button
+  a.scroll-to-top.rounded(href='#page-top')
+    i.fas.fa-angle-up
+  include component/logout_modal
+  include component/scripts

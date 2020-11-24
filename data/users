@@ -1,0 +1,4 @@
+{"userid":"b","userpw":"b","checkpw":"b","name":"b","address":"b","phone":"b","email":"b@b","_id":"4w2iPuGRjYMNN3Ge"}
+{"userid":"a","userpw":"","name":"","address":"","phone":"","email":"","_id":"Iok022tbbaZBHXoJ","mileage":460}
+{"userid":"admin","userpw":"","name":"","address":"","phone":"","email":"","_id":"NrgiphokdxrWeWMQ"}
+{"$$indexCreated":{"fieldName":"userid","unique":true,"sparse":false}}

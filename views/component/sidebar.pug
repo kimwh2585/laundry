@@ -1,0 +1,50 @@
+// Sidebar
+ul#accordionSidebar.navbar-nav.bg-gradient-primary.sidebar.sidebar-dark.accordion
+  a.sidebar-brand.d-flex.align-items-center.justify-content-center(href='/')
+    i.icofont-washing-machine.icofont-3x
+    .sidebar-brand-text.mx-3 내 빨래
+  hr.sidebar-divider.my-0
+
+  if (session.logged)
+    li.nav-item
+      a.nav-link
+       span.mr-3 #{session.userid} 님
+       small #{session.mileage}P 
+    hr.sidebar-divider.my-0
+  li.nav-item
+    if (session.logged)
+      a.nav-link(href='/auth/logout')
+        i.fas.fa-sign-out-alt
+        span 로그아웃
+    else
+      a.nav-link(href='/auth/login')
+        i.fas.fa-sign-in-alt
+        span 로그인
+  hr.sidebar-divider.my-0
+  if (session.level >= 9000)
+    li.nav-item
+      a.nav-link(href='/admin/waitings')
+        i.icofont-washing-machine.icofont-1x
+        span 예약 현황
+    li.nav-item
+      a.nav-link(href='/admin/machines')
+        i.fas.fa-wrench
+        span 머신 관리
+  else if (session.level < 9000 && session.level > 0)
+    li.nav-item
+      a.nav-link(href='/laundry')
+        i.fas.fa-wrench
+        span 예약
+    li.nav-item
+      a.nav-link(href='/laundry-check')
+        i.fas.fa-wrench
+        span 예약확인
+  hr.sidebar-divider.my-0
+  li.nav-item
+    a.nav-link(href='/contact')
+      i.fas.fa-compass
+      span 찾아가기
+  hr.sidebar-divider.d-none.d-md-block
+
+  .text-center.d-none.d-md-inline
+    button#sidebarToggle.rounded-circle.border-0

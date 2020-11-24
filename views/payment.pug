@@ -1,0 +1,113 @@
+extends base.pug
+
+mixin make_machine_card(washer)
+  - var status = washer.broken?'broken':(washer.able?'able':'disable');
+  - var color = {'able':"success",'disable':"secondary",'broken':"danger"};
+  - var dict = {'able':"사용가능",'disable':"예약불가",'broken':"고장"};
+  .col-xs-12.mb-4.machine(data-machineid=washer._id)
+    form(action='/laundry/reserve' method='post')
+      input(type='hidden' required='required' name='machineid' value=washer._id)
+      input(type='hidden' required='required' name='date' value=date)
+      input(type='hidden' required='required' name='time' value=time)
+      input(type='hidden' required='required' name='duration' value=duration)
+      span(class=['badge', 'badge-'+color[status], 'text-lg', 'absolute-left-top']) #{washer.size}
+      div(class=['card','border-left-'+color[status],'shadow','h-100','py-2'])
+        .card-body
+          .row.no-gutters.align-items-center
+            .col-lg-6.col-md-12.d-none.d-lg-block.align-middle
+              i(class=['icofont-washing-machine','icofont-5x','text-'+color[status]])
+            .col-lg-6.col-md-12
+              .btn-group.mt-2.mb-2.w-100
+                if(status=='able')
+                  button.btn.btn-sm.btn-outline-dark.reserve(type='submit') 예약하기
+                else
+                  button.btn.btn-sm.btn-outline-dark(type='button',disabled='disabled') #{dict[status]}
+              if (status=='disable' && washer.remaintime > 0)
+                .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer #{timeformat.mmss(washer.remaintime)}
+              else
+                .h5.mb-0.font-weight-bold.text-gray-800.text-center.timer -- : --
+
+
+block content
+  .container
+    // Outer Row
+    .row.justify-content-center
+      .col-xl-8.col-lg-10
+        .card.o-hidden.border-0.shadow-lg
+          .card-header.py-3
+            h2.text-gray-900 바로결제 내역 상세
+          .card-body.p-0
+            // Nested Row within Card Body
+            div.col-xs-12.mb-4.machine.mx-3.mt-3
+              div(class=['card','border-left-success','shadow','h-100','py-2'])
+                //- span(class=['badge', 'badge-success', 'text-lg', 'absolute-left-top']) L
+                .card-body.py-0
+                  .row.no-gutters.align-items-center
+                    .col-lg-6.col-md-12.d-none.d-lg-block.align-middle
+                      i(class=['icofont-washing-machine','icofont-5x','text-success'])
+                    .col-lg-6.col-md-12
+                        h5.row 
+                        p
+                          h4 #{number} 번 
+                            small (#{size})
+                          h3 #{timeformat.yyyymmdd(start_date)}
+                          big #{timeformat.hhmm(start_date)} ~ #{timeformat.hhmm(end_date)}
+                            small (#{duration}분)
+            hr
+
+
+            if(session.level >= 1000)
+              p.m-3
+                label 마일리지 사용
+                  if (mileage > 0)
+                    input.usemileage(type='checkbox' name='usemileage' value=date).ml-2
+                  else
+                    input(disabled type='checkbox' name='usemileage' value=date).ml-2
+                span.float-right #{mileage} P
+              p.m-3 적립 마일리지
+                span.float-right +#{duration} P
+              hr
+              
+            form.user(action='/laundry/reserve', method='POST')
+
+
+              p.m-3 요금
+                span.float-right #{fee}
+                  span.ml-1 원
+
+              if(session.level >= 1000)
+                p.m-3.usemileage 마일리지 차감
+                  span.float-right -#{mileage > fee ? fee : mileage}
+                    span.ml-1 원
+              hr
+              p.m-3 총 금액
+                span.float-right#fee #{fee}
+                  span.ml-1 원
+
+              .row
+                .col-lg-12
+                  .px-5.mb-4
+                      input(type='hidden' required='required' name='machineid' value=machineid)
+                      input(type='hidden' required='required' name='date' value=date)
+                      input(type='hidden' required='required' name='time' value=time)
+                      input(type='hidden' required='required' name='duration' value=duration)
+                      input(type='hidden' required='required' name='usemileage' value=usemileage)
+                      input(type='hidden' required='required' name='size' value=size)
+                      input.btn.btn-success.btn-user.btn-block(name='anonymous' type='submit',value='결제하기')
+  script.
+    $("p.usemileage").hide()
+    $('input.usemileage').change(function() {
+      var chk = $(this).is(":checked");
+      if(chk) {
+        f = #{mileage > fee ? fee : mileage}
+        r = #{fee - (mileage > fee ? fee : mileage)}
+        $("p.usemileage").show()
+        $("#fee").text(r)
+        $("input[name=usemileage]").val(true)
+      }
+      else {
+        $("p.usemileage").hide()
+        $("#fee").text(#{fee})
+        //- $("input[name=chgmileage]").val($("#fee").text())
+      }
+    })

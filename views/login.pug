@@ -1,0 +1,34 @@
+extends base.pug
+
+
+block content
+  .container
+    // Outer Row
+    .row.justify-content-center
+      .col-xl-6.col-lg-8
+        .card.o-hidden.border-0.shadow-lg.my-5
+          .card-body.p-0
+            // Nested Row within Card Body
+            .row
+              .col-lg-12
+                .p-5
+                  .text-center
+                    h1.text-gray-900.mb-4 Login
+                  form.user(action='/auth', method='POST')
+                    .form-group
+                      input.form-control.form-control-user(type='text' placeholder='아이디', name='userid')
+                    .form-group
+                      input.form-control.form-control-user(type='password' placeholder='비밀번호', name='userpw')
+                    .form-group
+                      .custom-control.custom-checkbox.small
+                        input.custom-control-input(type='checkbox')
+                        label.custom-control-label(for='customCheck') 로그인 상태 유지
+                    input.btn.btn-primary.btn-user.btn-block(type='submit',value='로그인')
+                  br
+                  form.user(action='/auth/anonymous', method='POST')
+                    input.btn.btn-secondary.btn-user.btn-block(name='anonymous' type='submit',value='비회원으로 시작하기')
+                  hr
+                  .text-center
+                    a.small(href='/auth/forgot-password') 비밀번호 찾기
+                  .text-center
+                    a.small(href='/auth/signup-agree') 회원가입
